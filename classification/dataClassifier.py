@@ -415,7 +415,7 @@ def runClassifier(args, options):
     analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
 
     # do odds ratio computation if specified at command line
-    if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):
+    if((options.odds) & (options.classifier != "mostFrequent")):
         label1, label2 = options.label1, options.label2
         features_odds = classifier.findHighOddsFeatures(label1,label2)
         if(options.classifier == "naiveBayes" or options.classifier == "nb"):
