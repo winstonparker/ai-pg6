@@ -85,8 +85,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
                 for item in trainingLabels:
                     if label == item:
-                        count += 1
-                    total += 1
+                        count += 1.0
+                    total += 1.0
 
                 self.priorProb[label] = float(count) / float(total)
 
@@ -96,13 +96,18 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
                     if trainingLabels[i] != label:
                         continue
                     for cord, val in data.items():
-                       conditional[(cord, val, label)] += 1
-                       counting[(cord, label)] += 1
+                       conditional[(cord, val, label)] += 1.0
+                       counting[(cord, label)] += 1.0
+
 
             #Get P(f | y) =  c(f, y) / sum_f(c(f, y))
             for key, val in conditional.items():
                 cord, val2, label = key
-                conditional[key] = float((val + k)) / float((counting[(cord, label)] + 2*k ))
+                conditional[key] = float((val + k)) / float((counting[(cord, label)] + 2.0*k ))
+
+            for label in self.legalLabels:
+                for cord in self.features:
+                    conditional[cord, 1, label] = 1 - conditional[cord, 0, label]
 
             self.condProb = conditional
 
@@ -118,10 +123,16 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
                 largestK = k
                 bestCond = self.condProb
                 bestProb = self.priorProb
+            elif temp == kVal:
+                kVal = temp
+                largestK = min(largestK, k)
+                bestCond = self.condProb
+                bestProb = self.priorProb
+
+
 
         #largest k
         k = largestK
-        print k
         self.priorProb = bestProb
         self.condProb = bestCond
         self.classify(validationData)
