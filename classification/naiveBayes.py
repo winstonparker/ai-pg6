@@ -28,6 +28,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         self.type = "naivebayes"
         self.k = 1 # this is the smoothing parameter, ** use it in your train method **
         self.automaticTuning = False # Look at this flag to decide whether to choose k automatically ** use this in your train method **
+        self.priorProb = util.Counter()
+        self.condProb = util.Counter()
 
     def setSmoothing(self, k):
         """
@@ -67,9 +69,66 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         """
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        largestK = 1
+        kVal = 0
+        bestProb = util.Counter()
+        bestCond = util.Counter()
 
-        
+        for k in kgrid:
+            conditional = util.Counter()
+            counting = util.Counter()
+
+            #P(y)
+            for label in self.legalLabels:
+                count = 0
+                total = 0
+
+                for item in trainingLabels:
+                    if label == item:
+                        count += 1
+                    total += 1
+
+                self.priorProb[label] = float(count) / float(total)
+
+            #Get counts of data for c(f, y)
+            for label in self.legalLabels:
+                for i, data in enumerate(trainingData):
+                    if trainingLabels[i] != label:
+                        continue
+                    for cord, val in data.items():
+                       conditional[(cord, val, label)] += 1
+                       counting[(cord, label)] += 1
+
+            #Get P(f | y) =  c(f, y) / sum_f(c(f, y))
+            for key, val in conditional.items():
+                cord, val2, label = key
+                conditional[key] = float((val + k)) / float((counting[(cord, label)] + 2*k ))
+
+            self.condProb = conditional
+
+            guess = self.classify(validationData)
+
+            temp = 0;
+            for i, each in enumerate(guess):
+                if each == validationLabels[i]:
+                    temp+=1
+
+            if temp > kVal:
+                kVal = temp
+                largestK = k
+                bestCond = self.condProb
+                bestProb = self.priorProb
+
+        #largest k
+        k = largestK
+        print k
+        self.priorProb = bestProb
+        self.condProb = bestCond
+        self.classify(validationData)
+
+
+
+
     def classify(self, testData):
         """
         Classify the data based on the posterior distribution over labels.
@@ -94,9 +153,16 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         self.legalLabels.
         """
         logJoint = util.Counter()
+        for label in self.legalLabels:
+            prob = 0
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+            if self.priorProb[label] != 0:
+                prob = math.log(self.priorProb[label])
+
+            for cord, val in datum.items():
+                if self.condProb[(cord, val, label)] != 0:
+                    prob += math.log(self.condProb[(cord, val, label)])
+            logJoint[label] = prob
 
         return logJoint
 
