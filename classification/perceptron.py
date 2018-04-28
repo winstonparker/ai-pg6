@@ -55,12 +55,11 @@ class PerceptronClassifier:
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                bestScore = None
-                bestY = None
                 datum = trainingData[i]
+                bestScore = None
                 for y in self.legalLabels:
                   score = datum * self.weights[y]
-                  if score > bestScore or bestScore is None:
+                  if score > bestScore:
                       bestScore = score
                       bestY = y
 
