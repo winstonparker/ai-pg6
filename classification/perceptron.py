@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -55,7 +55,19 @@ class PerceptronClassifier:
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                bestScore = None
+                bestY = None
+                datum = trainingData[i]
+                for y in self.legalLabels:
+                  score = datum * self.weights[y]
+                  if score > bestScore or bestScore is None:
+                      bestScore = score
+                      bestY = y
+
+                actualY = trainingLabels[i]
+                if bestY != actualY:
+                  self.weights[actualY] = self.weights[actualY] + datum
+                  self.weights[bestY] = self.weights[bestY] - datum
 
     def classify(self, data ):
         """
