@@ -10,7 +10,7 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
+import collections
 
 import util
 import classificationMethod
@@ -186,7 +186,13 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         """
         featuresOdds = []
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-        
+
+        top = collections.Counter()
+        for feature in self.features:
+            prob = self.condProb[(feature, 1, label1)] / self.condProb[(feature, 1, label2)]
+            top[feature] = prob
+
+        for feature, val in top.most_common(100):
+            featuresOdds.append(feature)
+
         return featuresOdds
