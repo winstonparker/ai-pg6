@@ -63,9 +63,9 @@ class PerceptronClassifier:
                       bestScore = score
                       bestY = y
 
-                actualY = trainingLabels[i]
-                if bestY != actualY:
-                  self.weights[actualY] = self.weights[actualY] + datum
+                if bestY != trainingLabels[i]:
+                  #update weights
+                  self.weights[trainingLabels[i]] = self.weights[trainingLabels[i]] + datum
                   self.weights[bestY] = self.weights[bestY] - datum
 
     def classify(self, data ):
