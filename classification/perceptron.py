@@ -55,18 +55,19 @@ class PerceptronClassifier:
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                datum = trainingData[i]
-                bestScore = None
+                max = -9999999
+                #find best label
                 for y in self.legalLabels:
-                  score = datum * self.weights[y]
-                  if score > bestScore:
-                      bestScore = score
-                      bestY = y
+                  score = trainingData[i] * self.weights[y]
+                  if score > max:
+                      max = score
+                      label = y
 
-                if bestY != trainingLabels[i]:
+                #do we need to update weights?
+                if label != trainingLabels[i]:
                   #update weights
-                  self.weights[trainingLabels[i]] = self.weights[trainingLabels[i]] + datum
-                  self.weights[bestY] = self.weights[bestY] - datum
+                  self.weights[trainingLabels[i]] = self.weights[trainingLabels[i]] + trainingData[i]
+                  self.weights[label] = self.weights[label] - trainingData[i]
 
     def classify(self, data ):
         """
@@ -84,13 +85,15 @@ class PerceptronClassifier:
         return guesses
 
 
-    def findHighWeightFeatures(self, label):
+    def findHighOddsFeatures(self, label1, label2):
         """
-        Returns a list of the 100 features with the greatest weight for some label
+        Returns a list of the 100 features with the greatest difference in weights:
+
+                            w_label1 - w_label2
         """
         featuresWeights = []
 
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
-
+        
         return featuresWeights
